@@ -1,5 +1,7 @@
 package com.github.anilbolat.coffeehouseclient;
 
+import com.github.anilbolat.ejbtest.ejb.remote.CoffeeOrderRemoteEJB;
+import com.github.anilbolat.ejbtest.ejb.remote.CoffeeOrderRemoteStatefulEJBImpl;
 import com.github.anilbolat.ejbtest.ejb.remote.CoffeeRemoteEJB;
 import com.github.anilbolat.ejbtest.ejb.remote.CoffeeRemoteStatelessEJBImpl;
 
@@ -10,6 +12,8 @@ import java.util.Properties;
 
 public class EJBLookupManager {
 
+    private static final String APP_NAME = "coffee_house_ejb_war_exploded";
+
     private EJBLookupManager() {
     }
 
@@ -17,14 +21,27 @@ public class EJBLookupManager {
         return lookupCoffeeRemoteStatelessEJBBean();
     }
 
+    public static CoffeeOrderRemoteEJB createCoffeeOrderRemoteStatefulEJBFromJNDI() throws NamingException {
+        return lookupCoffeeOrderRemoteStatefulEJBBean();
+    }
+
     private static CoffeeRemoteEJB lookupCoffeeRemoteStatelessEJBBean() throws NamingException {
         Context ctx = createInitialContext();
         String namespace = "";
-        String appName = "coffee_house_ejb_war_exploded";
         String beanName = CoffeeRemoteStatelessEJBImpl.class.getSimpleName();
         String viewClassName = CoffeeRemoteEJB.class.getName();
-        Object lookupObject = ctx.lookup(namespace + appName + "/" + beanName + "!" + viewClassName);
+        Object lookupObject = ctx.lookup(namespace + APP_NAME + "/" + beanName + "!" + viewClassName);
         return (CoffeeRemoteEJB) lookupObject;
+    }
+
+
+    private static CoffeeOrderRemoteEJB lookupCoffeeOrderRemoteStatefulEJBBean() throws NamingException {
+        Context ctx = createInitialContext();
+        String namespace = "";
+        String beanName = CoffeeOrderRemoteStatefulEJBImpl.class.getSimpleName();
+        String viewClassName = CoffeeOrderRemoteEJB.class.getName();
+        Object lookupObject = ctx.lookup(namespace + APP_NAME + "/" + beanName + "!" + viewClassName);
+        return (CoffeeOrderRemoteEJB) lookupObject;
     }
 
     private static Context createInitialContext() throws NamingException {
